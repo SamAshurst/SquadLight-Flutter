@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location/location.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -26,7 +27,7 @@ class _MapPageState extends State<MapPage> {
               Flexible(
                 child: FlutterMap(
                   options:
-                      MapOptions(center: LatLng(23.777176, 90.399452), zoom: 8),
+                      MapOptions(center: LatLng(53.472164, -2.238193), zoom: 8),
                   layers: [
                     TileLayerOptions(
                         urlTemplate:
