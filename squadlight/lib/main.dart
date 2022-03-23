@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
 
 void main() {
   runApp(
@@ -19,54 +19,83 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-// Start of copied code
   LatLng userLoc = LatLng(53.472164, -2.238193);
-  late bool _serviceEnabled;
-  late PermissionStatus _permissionGranted;
-  LocationData? _userLocation;
 
-  Future<void> _getUserLocation() async {
-    Location location = Location();
+  /// Determine the current position of the device.
+  ///
+  /// When the location services are not enabled or permissions
+  /// are denied the `Future` will return an error.
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-    // Check if location service is enable
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
       }
     }
 
-    // Check if permission is granted
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
 
-    final _locationData = await location.getLocation();
-    setState(() {
-      _userLocation = _locationData;
-      userLoc = LatLng(_locationData.latitude!, _locationData.longitude!);
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+  _getCurrentLocation() {
+    Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best,
+            forceAndroidLocationManager: true)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+        userLoc = LatLng(_currentPosition.latitude, _currentPosition.longitude);
+      });
+    }).catchError((e) {
+      print(e);
     });
   }
-  //End of copied code
+
+  late Position _currentPosition;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: _getUserLocation, child: const Text('Get User Location')),
+          onPressed: () {
+            _getCurrentLocation();
+          },
+          child: const Text('Get User Location')),
       body: Center(
         child: Column(
           children: [
-            Text('$_userLocation'),
+            Text("Location Here"),
             Flexible(
               child: FlutterMap(
-                options:
-                    MapOptions(center: LatLng(53.472164, -2.238193), zoom: 8),
+                options: MapOptions(
+                  center: LatLng(53.472164, -2.238193),
+                  zoom: 8,
+                ),
                 layers: [
                   TileLayerOptions(
                       urlTemplate:
@@ -79,7 +108,7 @@ class _MapPageState extends State<MapPage> {
                         builder: (ctx) => const Icon(Icons.pin_drop),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
