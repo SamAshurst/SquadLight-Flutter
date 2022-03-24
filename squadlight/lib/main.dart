@@ -19,6 +19,11 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  void initState() {
+    initialize();
+    super.initState();
+  }
+
   LatLng userLoc = LatLng(53.472164, -2.238193);
 
   /// Determine the current position of the device.
@@ -62,6 +67,7 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
+// Function to get current user location
   _getCurrentLocation() {
     Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best,
@@ -78,42 +84,166 @@ class _MapPageState extends State<MapPage> {
 
   late Position _currentPosition;
 
+// Squad List Of Markers
+  List<Marker> squadMarkers = [];
+
+//Radius Markers
+  List<CircleMarker> circleMarkers = [];
+
+  initialize() {
+// Create Markers
+    Marker user1 = Marker(
+      point: LatLng(53.472164, -2.238193),
+      builder: (ctx) => const Icon(
+        Icons.location_on,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    );
+    Marker user2 = Marker(
+      point: LatLng(53.475554, -2.230983),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.red,
+        size: 50.0,
+      ),
+    );
+    Marker user3 = Marker(
+      point: LatLng(53.473158, -2.239189),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    );
+    Marker user4 = Marker(
+      point: LatLng(53.470958, -2.238189),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    );
+
+    //CircleMarker
+    CircleMarker user1Circle = CircleMarker(
+      point: LatLng(53.472164, -2.238193),
+      color: Colors.blue.withOpacity(0.2),
+      borderColor: Colors.blue.withOpacity(0.5),
+      borderStrokeWidth: 3.0,
+      radius: 80.0,
+    );
+    CircleMarker user2Circle = CircleMarker(
+      point: LatLng(53.475554, -2.230983),
+      color: Colors.red.withOpacity(0.2),
+      borderColor: Colors.red.withOpacity(0.5),
+      borderStrokeWidth: 3.0,
+      radius: 80.0,
+    );
+    CircleMarker user3Circle = CircleMarker(
+      point: LatLng(53.473158, -2.239189),
+      color: Colors.blue.withOpacity(0.2),
+      borderColor: Colors.blue.withOpacity(0.5),
+      borderStrokeWidth: 3.0,
+      radius: 80.0,
+    );
+    CircleMarker user4Circle = CircleMarker(
+      point: LatLng(53.470958, -2.238189),
+      color: Colors.blue.withOpacity(0.2),
+      borderColor: Colors.blue.withOpacity(0.5),
+      borderStrokeWidth: 3.0,
+      radius: 80.0,
+    );
+
+// Add Markers To List
+    setState(() {
+      squadMarkers.add(user1);
+      squadMarkers.add(user2);
+      squadMarkers.add(user3);
+      squadMarkers.add(user4);
+    });
+
+    setState(() {
+      circleMarkers.add(user1Circle);
+      circleMarkers.add(user2Circle);
+      circleMarkers.add(user3Circle);
+      circleMarkers.add(user4Circle);
+    });
+  }
+
+// Navigation - Current Selected Item
+  int _selectedIndex = 0;
+
+// Navigation - On Tap Switch Selection
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+// Navigation - Pages
+  List<Widget> _pages = <Widget>[
+    // Squad Page
+    Icon(
+      Icons.group,
+      size: 150,
+    ),
+    // Chat Page
+    Icon(
+      Icons.forum,
+      size: 150,
+    ),
+    // Map Page
+    Flexible(
+      child: FlutterMap(
+        options: MapOptions(
+          center: LatLng(53.472164, -2.238193),
+          zoom: 15,
+        ),
+        layers: [
+          TileLayerOptions(
+              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: ['a', 'b', 'c']),
+        ],
+      ),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _getCurrentLocation();
-          },
-          child: const Text('Get User Location')),
-      body: Center(
-        child: Column(
-          children: [
-            Text("Location Here"),
-            Flexible(
-              child: FlutterMap(
-                options: MapOptions(
-                  center: LatLng(53.472164, -2.238193),
-                  zoom: 8,
-                ),
-                layers: [
-                  TileLayerOptions(
-                      urlTemplate:
-                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      subdomains: ['a', 'b', 'c']),
-                  MarkerLayerOptions(
-                    markers: [
-                      Marker(
-                        point: LatLng(userLoc.latitude, userLoc.longitude),
-                        builder: (ctx) => const Icon(Icons.pin_drop),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("SquadLight"),
+        backgroundColor: Colors.grey[850],
+      ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey[850],
+        unselectedItemColor: Colors.grey,
+        selectedFontSize: 16,
+        selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedItemColor: Colors.amberAccent,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        iconSize: 30,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.groups),
+            label: "Squad",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.forum),
+            label: "Chat",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Map",
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
