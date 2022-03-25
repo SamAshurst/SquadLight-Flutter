@@ -92,8 +92,12 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _getCurrentLocation();
+          onPressed: () async {
+            SocketIo().joinRoom();
+
+            await _getCurrentLocation();
+
+            SocketIo().sendLocation(await userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(

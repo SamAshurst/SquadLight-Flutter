@@ -1,10 +1,13 @@
+import 'dart:convert';
+
+import 'package:latlong2/latlong.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 late Socket socket;
+
 class SocketIo {
 
-
-   Future<dynamic>connect() async {
+  void connect() {
     try {
       socket = io(
           'http://squadlight-node.herokuapp.com/',
@@ -20,11 +23,24 @@ class SocketIo {
     }
   }
 
-    void joinRoom(){
+  joinRoom() {
     socket.emit('joinRoom', 'MJonesTest');
   }
-  void message(){
-     socket.emit('message', "Hello?");
+
+   message () {
+    socket.emit('message', "Hello?");
+  }
+
+  disconnect() {
+    socket.disconnect();
+    socket.onDisconnect((_) => print('disconnected'));
+  }
+
+  sendLocation(userLoc) async {
+    print(userLoc.latitude);
+    var Lat = userLoc.latitude.toString();
+    var Lng = userLoc.longitude.toString();
+    var location = {'Lat': Lat, 'Lng': Lng};
+    socket.emit('pingLocation', location);
   }
 }
-
