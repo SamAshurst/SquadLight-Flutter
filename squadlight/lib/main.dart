@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 void main() {
   runApp(
@@ -20,6 +21,33 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   LatLng userLoc = LatLng(53.472164, -2.238193);
+  late Socket socket;
+
+  @override
+  void initState() {
+    super.initState();
+    connect();
+  }
+
+  void connect() {
+    try {
+      socket = io(
+          'http://squadlight-node.herokuapp.com/',
+          OptionBuilder()
+              .setTransports(['websocket']) // for Flutter or Dart VM
+              .disableAutoConnect() // disable auto-connection
+              .setExtraHeaders({'foo': 'bar'}) // optional
+              .build());
+      socket.connect();
+      socket.onConnect((_) => print('connect: ${socket.id}'));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void joinRoom() {
+    socket.emit('joinRoom', 'MJonesTest');
+  }
 
   /// Determine the current position of the device.
   ///
