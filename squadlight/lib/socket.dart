@@ -1,23 +1,31 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:socket_io_client/socket_io_client.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-late Socket socket;
+late IO.Socket socket;
 
-class SocketIo {
+class SocketIo extends ChangeNotifier{
 
-  void connect() {
+  connect(BuildContext context) {
     try {
-      socket = io(
+      socket = IO.io(
           'http://squadlight-node.herokuapp.com/',
-          OptionBuilder()
+          IO.OptionBuilder()
               .setTransports(['websocket']) // for Flutter or Dart VM
               .disableAutoConnect() // disable auto-connection
               .setExtraHeaders({'foo': 'bar'}) // optional
               .build());
       socket.connect();
       socket.onConnect((_) => print('connect: ${socket.id}'));
+      socket.on('location', (data){
+        print(data.toString());
+      });
+      socket.on('message',(data){
+        print(data.toString());
+      });
+
     } catch (e) {
       print(e.toString());
     }
@@ -37,10 +45,11 @@ class SocketIo {
   }
 
   sendLocation(userLoc) async {
-    print(userLoc.latitude);
     var Lat = userLoc.latitude.toString();
     var Lng = userLoc.longitude.toString();
     var location = {'Lat': Lat, 'Lng': Lng};
     socket.emit('pingLocation', location);
   }
+
+
 }

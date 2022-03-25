@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'socket.dart';
 
 void main() {
+
   runApp(
     const MaterialApp(
       home: MapPage(),
@@ -27,7 +28,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    SocketIo().connect();
+    SocketIo().connect(context);
 
   }
 
@@ -93,11 +94,13 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            _getCurrentLocation();
+
+            // Test for socket.io joinRoom
             SocketIo().joinRoom();
 
-            await _getCurrentLocation();
-
-            SocketIo().sendLocation(userLoc);
+            // Test to send userLoc - currently not async
+            await SocketIo().sendLocation(userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(
