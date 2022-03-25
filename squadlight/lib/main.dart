@@ -97,7 +97,7 @@ class _MapPageState extends State<MapPage> {
 
             await _getCurrentLocation();
 
-            SocketIo().sendLocation(await userLoc);
+            SocketIo().sendLocation(userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(
