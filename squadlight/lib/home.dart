@@ -9,7 +9,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  SocketIo socket = SocketIo();
   final usernameController = TextEditingController();
   final roomNameController = TextEditingController();
   String username = '';
@@ -28,12 +27,6 @@ class _HomeState extends State<Home> {
     super.dispose();
     usernameController.dispose();
     roomNameController.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    socket.connect();
   }
 
   @override
