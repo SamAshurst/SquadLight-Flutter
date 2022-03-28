@@ -21,8 +21,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
-
 // Navigation - Current Selected Item
   int _selectedIndex = 0;
 // Navigation - On Tap Switch Selection
@@ -34,7 +32,7 @@ class _MainPageState extends State<MainPage> {
 
   // Navigation - Pages
   final List<Widget> _pages = <Widget>[
-    const ChatPage(),
+    ChatScreenGreen(key: Key("TestKey"), username: 'TestUser'),
     const MapPage(),
   ];
 
@@ -60,13 +58,8 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
-      
       floatingActionButton: Container(
-          child: const AspectRatio(
-              aspectRatio: 1.0,
-              child: SOSButton()
-          )),
-
+          child: const AspectRatio(aspectRatio: 1.0, child: SOSButton())),
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
@@ -75,7 +68,8 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.grey[850],
         unselectedItemColor: Colors.grey,
         selectedFontSize: 16,
-        selectedIconTheme: const IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedIconTheme:
+            const IconThemeData(color: Colors.amberAccent, size: 40),
         selectedItemColor: Colors.amberAccent,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         iconSize: 30,
