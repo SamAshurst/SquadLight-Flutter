@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 class SOSButton extends StatelessWidget {
   const SOSButton({
     Key? key,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -11,6 +13,7 @@ class SOSButton extends StatelessWidget {
           width: 130.0,
           child: FloatingActionButton.extended(
             heroTag: "SOS",
+
             label: const Text(
               "SOS",
               style: TextStyle(fontSize: 24.0),
@@ -26,3 +29,4 @@ class SOSButton extends StatelessWidget {
     alignment: FractionalOffset(0.08, -0.66));
   }
 }
+
