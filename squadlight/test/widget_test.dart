@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:squadlight/home.dart';
+import 'package:squadlight/pages/home.dart';
 
 
 void main() {
