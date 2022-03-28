@@ -7,7 +7,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 late IO.Socket socket;
 
 class SocketIo extends ChangeNotifier {
-  connect(BuildContext context) {
+  connect() {
     try {
       socket = IO.io(
           'http://squadlight-node.herokuapp.com/',
@@ -29,8 +29,8 @@ class SocketIo extends ChangeNotifier {
     }
   }
 
-  joinRoom() {
-    socket.emit('joinRoom', 'MJonesTest');
+  joinRoom(roomId, username) {
+    socket.emit('joinRoom', {roomId, username});
   }
 
   message() {
