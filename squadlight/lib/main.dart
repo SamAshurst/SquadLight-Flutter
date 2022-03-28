@@ -3,6 +3,7 @@ import 'socket.dart';
 import 'pages/home.dart';
 import 'pages/map.dart';
 import 'pages/chat.dart';
+import 'components/SOSButton.dart';
 
 void main() {
   runApp(
@@ -59,6 +60,12 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
+      floatingActionButton: Container(
+
+          child: const AspectRatio(
+              aspectRatio: 1.0,
+              child: SOSButton()
+          )),
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
