@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
-import 'socket.dart';
+import '../main.dart';
+import '../socket.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
+
 }
 
 class _HomeState extends State<Home> {
+
+  @override
+  void initState() {
+    super.initState();
+    SocketIo().connect();
+  }
+
   final usernameController = TextEditingController();
   final roomNameController = TextEditingController();
   String username = '';
@@ -63,7 +72,11 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(35.0),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  socket.joinRoom(roomName, username);
+                  SocketIo().joinRoom(roomName, username);
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) => const MainPage(
+                      ),
+                  ));
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -82,7 +95,11 @@ class _HomeState extends State<Home> {
             ),
             ElevatedButton.icon(
               onPressed: () {
-                socket.joinRoom(roomName, username);
+                SocketIo().joinRoom(roomName, username);
+                Navigator.pushReplacement(context,MaterialPageRoute(
+                    builder: (context) => const MainPage(
+                    ),
+                ));
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
