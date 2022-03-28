@@ -6,8 +6,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 late IO.Socket socket;
 
-class SocketIo extends ChangeNotifier{
-
+class SocketIo extends ChangeNotifier {
   connect(BuildContext context) {
     try {
       socket = IO.io(
@@ -19,13 +18,12 @@ class SocketIo extends ChangeNotifier{
               .build());
       socket.connect();
       socket.onConnect((_) => print('connect: ${socket.id}'));
-      socket.on('location', (data){
-        print(data.toString());
+      socket.on('location', (data) {
+        print(data.toString()); // Currently only prints to terminal
       });
-      socket.on('message',(data){
-        print(data.toString());
+      socket.on('message', (data) {
+        print(data.toString()); // Currently only prints to terminal
       });
-
     } catch (e) {
       print(e.toString());
     }
@@ -35,7 +33,7 @@ class SocketIo extends ChangeNotifier{
     socket.emit('joinRoom', 'MJonesTest');
   }
 
-   message () {
+  message() {
     socket.emit('message', "Hello?");
   }
 
@@ -50,6 +48,14 @@ class SocketIo extends ChangeNotifier{
     var location = {'Lat': Lat, 'Lng': Lng};
     socket.emit('pingLocation', location);
   }
-
-
 }
+
+// Used in main.dart widgets:
+
+// @override
+// void initState() {
+//   super.initState();
+//   SocketIo().connect(context);
+// }
+// SocketIo().joinRoom();
+// SocketIo().sendLocation(userLoc);

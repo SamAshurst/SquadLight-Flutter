@@ -7,7 +7,6 @@ import 'package:latlong2/latlong.dart';
 import 'socket.dart';
 
 void main() {
-
   runApp(
     const MaterialApp(
       home: MapPage(),
@@ -24,13 +23,6 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   LatLng userLoc = LatLng(53.472164, -2.238193);
-
-  @override
-  void initState() {
-    super.initState();
-    SocketIo().connect(context);
-
-  }
 
   /// Determine the current position of the device.
   ///
@@ -93,14 +85,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: () async {
+          onPressed: () {
             _getCurrentLocation();
-
-            // Test for socket.io joinRoom
-            SocketIo().joinRoom();
-
-            // Test to send userLoc - currently not async
-            await SocketIo().sendLocation(userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(
