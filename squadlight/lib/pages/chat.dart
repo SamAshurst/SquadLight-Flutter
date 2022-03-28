@@ -27,37 +27,6 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
     if (mounted) setState(f);
   }
 
-  // @override
-  // void initState() {
-  //   try {
-  //     socket =
-  //         io("https://blooming-coast-89347.herokuapp.com/", <String, dynamic>{
-  //       "transports": ["websocket"],
-  //       "autoConnect": false,
-  //     });
-
-  //     socket.connect();
-
-  //     socket.on('connect', (data) {
-  //       debugPrint('connected');
-  //       print(socket.connected);
-  //     });
-
-  //     socket.on('message', (data) {
-  //       var message = ChatModel.fromJson(data);
-  //       setStateIfMounted(() {
-  //         _messages.add(message);
-  //       });
-  //     });
-
-  //     socket.onDisconnect((_) => debugPrint('disconnect'));
-  //   } catch (e) {
-  //     print(e);
-  //   }
-
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
