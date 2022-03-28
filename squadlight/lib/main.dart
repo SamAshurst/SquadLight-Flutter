@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'socket.dart';
-import 'pages/home/home.dart';
-import 'pages/map/map.dart';
-import 'pages/chat/chat.dart';
+import 'pages/home.dart';
+import 'pages/map.dart';
+import 'pages/chat.dart';
 import 'components/SOSButton.dart';
-
 
 void main() {
   runApp(
@@ -61,8 +60,12 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
-
-      floatingActionButton: SOSButton(),
+      
+      floatingActionButton: Container(
+          child: const AspectRatio(
+              aspectRatio: 1.0,
+              child: SOSButton()
+          )),
 
       body: IndexedStack(
         index: _selectedIndex,

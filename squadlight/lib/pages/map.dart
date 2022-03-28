@@ -76,6 +76,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: "getCurrentLocation",
           onPressed: () {
             _getCurrentLocation();
           },

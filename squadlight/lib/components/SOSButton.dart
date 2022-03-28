@@ -12,6 +12,8 @@ class SOSButton extends StatelessWidget {
           height: 75.0,
           width: 130.0,
           child: FloatingActionButton.extended(
+            heroTag: "SOS",
+
             label: const Text(
               "SOS",
               style: TextStyle(fontSize: 24.0),
@@ -24,6 +26,7 @@ class SOSButton extends StatelessWidget {
             backgroundColor: Colors.red,
           ),
         ),
-        alignment: FractionalOffset(0.065, 0.145));
+    alignment: FractionalOffset(0.08, -0.66));
   }
 }
+
