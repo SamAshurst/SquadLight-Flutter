@@ -10,13 +10,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:squadlight/main.dart';
-import '../lib/pages/map/map.dart';
+import 'package:squadlight/pages/home.dart';
+
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MapPage());
+    await tester.pumpWidget(const Home());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

@@ -1,19 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
 import 'socket.dart';
 import 'pages/home/home.dart';
 import 'pages/map/map.dart';
 import 'pages/chat/chat.dart';
 import 'components/SOSButton.dart';
 
+
 void main() {
   runApp(
     const MaterialApp(
-      home: MainPage(),
+      home: Home(),
     ),
   );
 }
@@ -26,9 +22,10 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
+
 // Navigation - Current Selected Item
   int _selectedIndex = 0;
-
 // Navigation - On Tap Switch Selection
   void _onItemTapped(int index) {
     setState(() {
@@ -36,11 +33,10 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-// Navigation - Pages
-  List<Widget> _pages = <Widget>[
-    // HomePage(),
-    ChatPage(),
-    MapPage(),
+  // Navigation - Pages
+  final List<Widget> _pages = <Widget>[
+    const ChatPage(),
+    const MapPage(),
   ];
 
   var appBarHeight = AppBar().preferredSize.height;
@@ -49,23 +45,25 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("SquadLight"),
+        title: const Text("SquadLight"),
         backgroundColor: Colors.grey[850],
         actions: [
           PopupMenuButton(
             offset: Offset(0.0, appBarHeight),
             itemBuilder: (context) => [
               PopupMenuItem(
-                child: Text('Leave Squad'),
+                child: const Text('Leave Squad'),
                 onTap: () {
-                  print("home screen");
+                  // Add functionality to leave current squad/room
                 },
               )
             ],
           )
         ],
       ),
+
       floatingActionButton: SOSButton(),
+
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
@@ -74,9 +72,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.grey[850],
         unselectedItemColor: Colors.grey,
         selectedFontSize: 16,
-        selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedIconTheme: const IconThemeData(color: Colors.amberAccent, size: 40),
         selectedItemColor: Colors.amberAccent,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         iconSize: 30,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
