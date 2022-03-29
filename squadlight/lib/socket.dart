@@ -4,7 +4,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 late IO.Socket socket;
 
 class SocketIo extends ChangeNotifier {
-
   connect() {
     try {
       socket = IO.io(
@@ -31,8 +30,12 @@ class SocketIo extends ChangeNotifier {
     socket.emit('joinRoom', {roomId, username});
   }
 
-  message() {
-    socket.emit('message', "Hello?");
+  message(message) {
+    socket.emit('message', message);
+  }
+
+  eMessage(message) {
+    socket.emit('eMessage', message);
   }
 
   disconnect() {
