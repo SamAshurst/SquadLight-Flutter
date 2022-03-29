@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
-
+import 'package:flutter_compass/flutter_compass.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -13,6 +13,44 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  MapController mapController = MapController();
+  late UserLocationOptions userLocationOptions;
+  // ADD THIS
+  List<Marker> markers = [
+    Marker(
+      point: LatLng(53.472164, -2.238193),
+      builder: (ctx) => const Icon(
+        Icons.location_on,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    ),
+    Marker(
+      point: LatLng(53.475554, -2.230983),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.red,
+        size: 50.0,
+      ),
+    ),
+   Marker(
+      point: LatLng(53.473158, -2.239189),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    ),
+    Marker(
+      point: LatLng(53.470958, -2.238189),
+      builder: (ctx) => const Icon(
+        Icons.location_on_outlined,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    ),
+  ];
+
   LatLng userLoc = LatLng(53.472164, -2.238193);
 
   /// Determine the current position of the device.
@@ -58,8 +96,8 @@ class _MapPageState extends State<MapPage> {
 
   _getCurrentLocation() {
     Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-        forceAndroidLocationManager: true)
+            desiredAccuracy: LocationAccuracy.best,
+            forceAndroidLocationManager: true)
         .then((Position position) {
       setState(() {
         _currentPosition = position;
@@ -74,9 +112,14 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    userLocationOptions = UserLocationOptions(
+      context: context,
+      mapController: mapController,
+      markers: markers,
+    );
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        heroTag: "getCurrentLocation",
+          heroTag: "getCurrentLocation",
           onPressed: () {
             _getCurrentLocation();
           },
@@ -90,21 +133,19 @@ class _MapPageState extends State<MapPage> {
                 options: MapOptions(
                   center: LatLng(53.472164, -2.238193),
                   zoom: 8,
+                  plugins: [
+                    UserLocationPlugin(),
+                  ],
                 ),
                 layers: [
                   TileLayerOptions(
                       urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c']),
-                  MarkerLayerOptions(
-                    markers: [
-                      Marker(
-                        point: LatLng(userLoc.latitude, userLoc.longitude),
-                        builder: (ctx) => const Icon(Icons.pin_drop),
-                      ),
-                    ],
-                  ),
+                  MarkerLayerOptions(markers: markers),
+                  userLocationOptions,
                 ],
+                mapController: mapController,
               ),
             ),
           ],
