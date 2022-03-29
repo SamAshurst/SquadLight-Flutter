@@ -13,45 +13,35 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  late LatLng userLoc;
   MapController mapController = MapController();
   late UserLocationOptions userLocationOptions;
-  // ADD THIS
-  List<Marker> markers = [
-    Marker(
-      point: LatLng(53.472164, -2.238193),
+  List<Marker> markers = [];
+
+  void initState() async {
+    await _getCurrentLocation();
+    Marker userMarker = Marker(
+      point: userLoc,
       builder: (ctx) => const Icon(
         Icons.location_on,
         color: Colors.black87,
         size: 50.0,
       ),
-    ),
-    Marker(
-      point: LatLng(53.475554, -2.230983),
-      builder: (ctx) => const Icon(
-        Icons.location_on_outlined,
-        color: Colors.red,
-        size: 50.0,
-      ),
-    ),
-   Marker(
-      point: LatLng(53.473158, -2.239189),
-      builder: (ctx) => const Icon(
-        Icons.location_on_outlined,
-        color: Colors.black87,
-        size: 50.0,
-      ),
-    ),
-    Marker(
-      point: LatLng(53.470958, -2.238189),
-      builder: (ctx) => const Icon(
-        Icons.location_on_outlined,
-        color: Colors.black87,
-        size: 50.0,
-      ),
-    ),
-  ];
+    );
+    setState(() {
+      markers.add(userMarker);
+    });
+  }
 
-  LatLng userLoc = LatLng(53.472164, -2.238193);
+// Example Marker
+  //  Marker(
+  //     point: LatLng(53.472164, -2.238193),
+  //     builder: (ctx) => const Icon(
+  //       Icons.location_on,
+  //       color: Colors.black87,
+  //       size: 50.0,
+  //     ),
+  //   ),
 
   /// Determine the current position of the device.
   ///
@@ -121,7 +111,7 @@ class _MapPageState extends State<MapPage> {
       floatingActionButton: FloatingActionButton(
           heroTag: "getCurrentLocation",
           onPressed: () {
-            _getCurrentLocation();
+            print(userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(
@@ -131,8 +121,8 @@ class _MapPageState extends State<MapPage> {
             Flexible(
               child: FlutterMap(
                 options: MapOptions(
-                  center: LatLng(53.472164, -2.238193),
-                  zoom: 8,
+                  center: userLoc,
+                  zoom: 15,
                   plugins: [
                     UserLocationPlugin(),
                   ],
