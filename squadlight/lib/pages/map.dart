@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import '../socket.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -13,24 +16,35 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  late LatLng userLoc;
-  MapController mapController = MapController();
+  LatLng userLoc = LatLng(53.472164, -2.238193);
+  final MapController mapController = MapController();
   late UserLocationOptions userLocationOptions;
   List<Marker> markers = [];
 
-  void initState() async {
+  void initState() {
+    markers.add(Marker(
+      point: LatLng(53.472164, -2.238193),
+      builder: (ctx) => const Icon(
+        Icons.location_on,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    ));
+    getLocationOnInit();
+  }
+
+  void getLocationOnInit() async {
     await _getCurrentLocation();
     Marker userMarker = Marker(
       point: userLoc,
       builder: (ctx) => const Icon(
         Icons.location_on,
         color: Colors.black87,
-        size: 50.0,
+        size: 0,
       ),
     );
-    setState(() {
-      markers.add(userMarker);
-    });
+    markers[0] = userMarker;
+    SocketIo().sendLocation(userLoc);
   }
 
 // Example Marker
@@ -84,8 +98,8 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  _getCurrentLocation() {
-    Geolocator.getCurrentPosition(
+  _getCurrentLocation() async {
+    await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best,
             forceAndroidLocationManager: true)
         .then((Position position) {
@@ -106,18 +120,21 @@ class _MapPageState extends State<MapPage> {
       context: context,
       mapController: mapController,
       markers: markers,
+      updateMapLocationOnPositionChange: false,
+      zoomToCurrentLocationOnLoad: true,
     );
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           heroTag: "getCurrentLocation",
-          onPressed: () {
-            print(userLoc);
+          onPressed: () async {
+            await _getCurrentLocation();
+            userLocationOptions.updateMapLocationOnPositionChange = true;
+            SocketIo().sendLocation(userLoc);
           },
           child: const Text('Get User Location')),
       body: Center(
         child: Column(
           children: [
-            Text("Location Here"),
             Flexible(
               child: FlutterMap(
                 options: MapOptions(
@@ -132,7 +149,7 @@ class _MapPageState extends State<MapPage> {
                       urlTemplate:
                           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c']),
-                  MarkerLayerOptions(markers: markers),
+                  if (markers.length > 1) MarkerLayerOptions(markers: markers),
                   userLocationOptions,
                 ],
                 mapController: mapController,

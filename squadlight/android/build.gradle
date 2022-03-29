@@ -10,7 +10,9 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.2.0'
     }
-  compileSdkVersion 28
+    ext {
+        compileSdkVersion = 28
+    }
 }
 
 allprojects {
