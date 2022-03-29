@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
 import '../main.dart';
-import '../socket.dart';
+import 'package:squadlight/inheritedSocket.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
-
 }
 
 class _HomeState extends State<Home> {
-
-  @override
-  void initState() {
-    super.initState();
-    SocketIo().connect();
-  }
-
   final usernameController = TextEditingController();
   final roomNameController = TextEditingController();
   String username = '';
@@ -40,6 +32,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    InheritedSocket.of(context).socket.connect();
     return Scaffold(
       body: Center(
         child: Column(
@@ -72,11 +65,14 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(35.0),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  SocketIo().joinRoom(roomName, username);
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                      builder: (context) => const MainPage(
-                      ),
-                  ));
+                  InheritedSocket.of(context)
+                      .socket
+                      .joinRoom(roomName, username);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainPage(),
+                      ));
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -95,11 +91,12 @@ class _HomeState extends State<Home> {
             ),
             ElevatedButton.icon(
               onPressed: () {
-                SocketIo().joinRoom(roomName, username);
-                Navigator.pushReplacement(context,MaterialPageRoute(
-                    builder: (context) => const MainPage(
-                    ),
-                ));
+                InheritedSocket.of(context).socket.joinRoom(roomName, username);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainPage(),
+                    ));
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),

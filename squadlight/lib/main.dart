@@ -4,11 +4,14 @@ import 'pages/home.dart';
 import 'pages/map.dart';
 import 'pages/chat.dart';
 import 'components/SOSButton.dart';
+import 'inheritedSocket.dart';
 
 void main() {
   runApp(
-    const MaterialApp(
-      home: Home(),
+    InheritedSocket(
+      child: const MaterialApp(
+        home: Home(),
+      ),
     ),
   );
 }
