@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'socket.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class InheritedSocket extends InheritedWidget {

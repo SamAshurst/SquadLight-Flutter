@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'socket.dart';
 import 'pages/home.dart';
 import 'pages/map.dart';
 import 'pages/chat.dart';

@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import '/models/chat_model.dart';
-import '/socket.dart';
 import 'package:squadlight/inheritedSocket.dart';
 
 class ChatScreenGreen extends StatefulWidget {
