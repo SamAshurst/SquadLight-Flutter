@@ -29,7 +29,7 @@ class _ChatScreenRedState extends State<ChatScreenRed> {
   @override
   Widget build(BuildContext context) {
     if (connectionActive == false) {
-      InheritedSocket.of(context).socket.on('emessage', (message) {
+      InheritedSocket.of(context).socket.on('eMessage', (message) {
         print("message received");
         print(message);
         Map<String, dynamic> convertedMessage =
@@ -124,9 +124,10 @@ class _ChatScreenRedState extends State<ChatScreenRed> {
                         onPressed: () async {
                           if (_messageController.text.trim().isNotEmpty) {
                             String message = _messageController.text.trim();
+                            print(message);
                             InheritedSocket.of(context)
                                 .socket
-                                .emit("emessage", message);
+                                .emit("eMessage", message);
                             setState(() {
                               _messages.add(ChatModel(
                                   id: 'me',
@@ -176,11 +177,16 @@ class ChatBubble extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Column(
-        mainAxisAlignment:
-            username == "me" ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: username == "me"
+            ? MainAxisAlignment.end
+            : username == "System"
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
         crossAxisAlignment: username == "me"
             ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+            : username == "System"
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -189,8 +195,11 @@ class ChatBubble extends StatelessWidget {
             decoration: BoxDecoration(
               color: username == "me"
                   ? Color.fromARGB(255, 254, 255, 193)
-                  : Color.fromARGB(255, 255, 250, 220),
-              borderRadius: isMe
+                  : Color.fromARGB(255, 255, 227, 227),
+              border: username == "system"
+                  ? Border.all(color: Colors.black, width: 8)
+                  : Border.all(),
+              borderRadius: username == "me"
                   ? const BorderRadius.only(
                       topRight: Radius.circular(11),
                       topLeft: Radius.circular(11),
