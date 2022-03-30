@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import '/models/chat_model.dart';
-import '/socket.dart';
+import 'package:squadlight/inheritedSocket.dart';
 
 class ChatScreenGreen extends StatefulWidget {
-  final String username;
   const ChatScreenGreen({
     required Key key,
-    required this.username,
   }) : super(key: key);
 
   @override
@@ -29,6 +26,18 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
 
   @override
   Widget build(BuildContext context) {
+    InheritedSocket.of(context).socket.on('message', (message) {
+      print(message);
+      Map<String, dynamic> convertedMessage =
+          Map<String, dynamic>.from(message);
+      setState(() {
+        _messages.add(ChatModel(
+            id: convertedMessage['username'],
+            username: convertedMessage['username'],
+            sentAt: convertedMessage['time'],
+            message: convertedMessage['text']));
+      });
+    });
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -63,12 +72,11 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: _messages.map((message) {
-                                  print(message);
                                   return ChatBubble(
                                       date: message.sentAt,
                                       message: message.message,
-                                      isMe: message.id == socket.id,
-                                      key: Key("Test"));
+                                      isMe: message.id == 'me',
+                                      key: const Key("Test"));
                                 }).toList()),
                           ],
                         ),
@@ -107,8 +115,19 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
                         onPressed: () async {
                           if (_messageController.text.trim().isNotEmpty) {
                             String message = _messageController.text.trim();
-                            SocketIo().message();
-                            _messageController.clear();
+                            InheritedSocket.of(context)
+                                .socket
+                                .emit("message", message);
+                            setState(() {
+                              _messages.add(ChatModel(
+                                  id: 'me',
+                                  username: 'me',
+                                  sentAt: 'time',
+                                  message: message));
+                              _messageController.clear();
+                              print(
+                                  InheritedSocket.of(context).socket.connected);
+                            });
                           }
                         },
                         mini: true,
