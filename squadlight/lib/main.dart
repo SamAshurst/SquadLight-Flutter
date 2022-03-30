@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
 
   // Navigation - Pages
   final List<Widget> _pages = <Widget>[
-    ChatScreenGreen(key: Key("TestKey"), username: 'TestUser'),
+    ChatScreenGreen(key: Key("TestKey")),
     const MapPage(),
   ];
 

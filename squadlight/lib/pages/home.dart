@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   InheritedSocket.of(context)
                       .socket
-                      .joinRoom(roomName, username);
+                      .emit('joinRoom', {roomName, username});
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -91,7 +91,9 @@ class _HomeState extends State<Home> {
             ),
             ElevatedButton.icon(
               onPressed: () {
-                InheritedSocket.of(context).socket.joinRoom(roomName, username);
+                InheritedSocket.of(context)
+                    .socket
+                    .emit('joinRoom', {roomName, username});
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
