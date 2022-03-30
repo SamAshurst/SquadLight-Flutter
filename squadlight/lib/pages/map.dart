@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,7 +6,6 @@ import 'package:squadlight/inheritedSocket.dart';
 import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter_compass/flutter_compass.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -23,45 +21,17 @@ class _MapPageState extends State<MapPage> {
   List<Marker> markers = [];
 
   void initState() {
-    markers.add(Marker(
-      point: LatLng(53.472164, -2.238193),
-      builder: (ctx) => const Icon(
-        Icons.location_on,
-        color: Colors.black87,
-        size: 50.0,
-      ),
-    ));
     getLocationOnInit();
   }
 
   void getLocationOnInit() async {
     await _getCurrentLocation();
-    Marker userMarker = Marker(
-      point: userLoc,
-      builder: (ctx) => const Icon(
-        Icons.location_on,
-        color: Colors.black87,
-        size: 0,
-      ),
-    );
-    markers[0] = userMarker;
-    // Socket io send location
   }
 
-// Example Marker
-  //  Marker(
-  //     point: LatLng(53.472164, -2.238193),
-  //     builder: (ctx) => const Icon(
-  //       Icons.location_on,
-  //       color: Colors.black87,
-  //       size: 50.0,
-  //     ),
-  //   ),
+  // Determine the current position of the device.
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
+  // When the location services are not enabled or permissions
+  // are denied the `Future` will return an error.
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -115,42 +85,52 @@ class _MapPageState extends State<MapPage> {
 
   late Position _currentPosition;
 
-  void createMarker(location) {
+  void createMarker(location) async {
     Map<String, dynamic> convertedLocation =
-    Map<String, dynamic>.from(location);
+        Map<String, dynamic>.from(location);
     var Lat = double.parse(convertedLocation['Lat']);
     var Lng = double.parse(convertedLocation['Lng']);
     setState(() {
+      for (var i = 0; i < markers.length; i++) {
+        if (markers[i].key == Key(convertedLocation['id'])) {
+          markers.removeAt(i);
+        }
+      }
       markers.add(Marker(
         point: LatLng(Lat, Lng),
-        builder: (ctx) =>
-        const Icon(
+        key: Key(convertedLocation['id']),
+        builder: (ctx) => const Icon(
           Icons.location_on,
           color: Colors.black87,
           size: 35.0,
         ),
       ));
     });
-    for(var i = 0; i < markers.length; i++){
-      print(markers[i].point);
-    }
+    await _getCurrentLocation();
   }
+
   bool connectionActive = false;
 
   @override
   Widget build(BuildContext context) {
-    print(markers);
-    if (!connectionActive) {
-      InheritedSocket
-          .of(context)
+    Timer timer = Timer(const Duration(seconds: 60), () async {
+      await _getCurrentLocation();
+      var Lat = userLoc.latitude;
+      var Lng = userLoc.longitude;
+      InheritedSocket.of(context)
           .socket
-          .on('location', (location) {
+          .emit('pingLocation', {'Lat': Lat, 'Lng': Lng});
+    });
+
+    if (!connectionActive) {
+      InheritedSocket.of(context).socket.on('location', (location) {
         createMarker(location);
       });
       setState(() {
         connectionActive = true;
       });
     }
+
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
@@ -159,14 +139,6 @@ class _MapPageState extends State<MapPage> {
       zoomToCurrentLocationOnLoad: true,
     );
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          heroTag: "getCurrentLocation",
-          onPressed: () async {
-            await _getCurrentLocation();
-            userLocationOptions.updateMapLocationOnPositionChange = true;
-            // SocketIo send location
-          },
-          child: const Text('Get User Location')),
       body: Center(
         child: Column(
           children: [
@@ -184,7 +156,7 @@ class _MapPageState extends State<MapPage> {
                       urlTemplate:
                           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c']),
-                  if (markers.length > 1) MarkerLayerOptions(markers: markers),
+                  if (markers.length >= 1) MarkerLayerOptions(markers: markers),
                   userLocationOptions,
                 ],
                 mapController: mapController,
