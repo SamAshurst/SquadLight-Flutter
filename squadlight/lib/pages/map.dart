@@ -6,7 +6,6 @@ import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import '../socket.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -44,7 +43,7 @@ class _MapPageState extends State<MapPage> {
       ),
     );
     markers[0] = userMarker;
-    SocketIo().sendLocation(userLoc);
+    // Socket io send location
   }
 
 // Example Marker
@@ -129,7 +128,7 @@ class _MapPageState extends State<MapPage> {
           onPressed: () async {
             await _getCurrentLocation();
             userLocationOptions.updateMapLocationOnPositionChange = true;
-            SocketIo().sendLocation(userLoc);
+            // SocketIo send location
           },
           child: const Text('Get User Location')),
       body: Center(
