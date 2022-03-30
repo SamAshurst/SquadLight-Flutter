@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
-
+import 'package:flutter_compass/flutter_compass.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -14,6 +16,45 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   LatLng userLoc = LatLng(53.472164, -2.238193);
+  final MapController mapController = MapController();
+  late UserLocationOptions userLocationOptions;
+  List<Marker> markers = [];
+
+  void initState() {
+    markers.add(Marker(
+      point: LatLng(53.472164, -2.238193),
+      builder: (ctx) => const Icon(
+        Icons.location_on,
+        color: Colors.black87,
+        size: 50.0,
+      ),
+    ));
+    getLocationOnInit();
+  }
+
+  void getLocationOnInit() async {
+    await _getCurrentLocation();
+    Marker userMarker = Marker(
+      point: userLoc,
+      builder: (ctx) => const Icon(
+        Icons.location_on,
+        color: Colors.black87,
+        size: 0,
+      ),
+    );
+    markers[0] = userMarker;
+    // Socket io send location
+  }
+
+// Example Marker
+  //  Marker(
+  //     point: LatLng(53.472164, -2.238193),
+  //     builder: (ctx) => const Icon(
+  //       Icons.location_on,
+  //       color: Colors.black87,
+  //       size: 50.0,
+  //     ),
+  //   ),
 
   /// Determine the current position of the device.
   ///
@@ -56,10 +97,10 @@ class _MapPageState extends State<MapPage> {
     return await Geolocator.getCurrentPosition();
   }
 
-  _getCurrentLocation() {
-    Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-        forceAndroidLocationManager: true)
+  _getCurrentLocation() async {
+    await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best,
+            forceAndroidLocationManager: true)
         .then((Position position) {
       setState(() {
         _currentPosition = position;
@@ -74,37 +115,43 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    userLocationOptions = UserLocationOptions(
+      context: context,
+      mapController: mapController,
+      markers: markers,
+      updateMapLocationOnPositionChange: false,
+      zoomToCurrentLocationOnLoad: true,
+    );
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        heroTag: "getCurrentLocation",
-          onPressed: () {
-            _getCurrentLocation();
+          heroTag: "getCurrentLocation",
+          onPressed: () async {
+            await _getCurrentLocation();
+            userLocationOptions.updateMapLocationOnPositionChange = true;
+            // SocketIo send location
           },
           child: const Text('Get User Location')),
       body: Center(
         child: Column(
           children: [
-            Text("Location Here"),
             Flexible(
               child: FlutterMap(
                 options: MapOptions(
-                  center: LatLng(53.472164, -2.238193),
-                  zoom: 8,
+                  center: userLoc,
+                  zoom: 15,
+                  plugins: [
+                    UserLocationPlugin(),
+                  ],
                 ),
                 layers: [
                   TileLayerOptions(
                       urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c']),
-                  MarkerLayerOptions(
-                    markers: [
-                      Marker(
-                        point: LatLng(userLoc.latitude, userLoc.longitude),
-                        builder: (ctx) => const Icon(Icons.pin_drop),
-                      ),
-                    ],
-                  ),
+                  if (markers.length > 1) MarkerLayerOptions(markers: markers),
+                  userLocationOptions,
                 ],
+                mapController: mapController,
               ),
             ),
           ],
