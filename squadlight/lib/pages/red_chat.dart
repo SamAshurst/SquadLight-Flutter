@@ -54,7 +54,7 @@ class _ChatScreenRedState extends State<ChatScreenRed> {
           backgroundColor: Color.fromARGB(255, 170, 0, 0)),
       body: SafeArea(
         child: Container(
-          color: const Color(0xFFEAEFF2),
+          color: Color.fromARGB(255, 44, 44, 44),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -188,8 +188,8 @@ class ChatBubble extends StatelessWidget {
             constraints: BoxConstraints(maxWidth: size.width * .5),
             decoration: BoxDecoration(
               color: username == "me"
-                  ? const Color(0xFFE3D8FF)
-                  : const Color(0xFFFFFFFF),
+                  ? Color.fromARGB(255, 254, 255, 193)
+                  : Color.fromARGB(255, 255, 250, 220),
               borderRadius: isMe
                   ? const BorderRadius.only(
                       topRight: Radius.circular(11),
@@ -213,8 +213,8 @@ class ChatBubble extends StatelessWidget {
                   textAlign: TextAlign.end,
                   softWrap: true,
                   style: const TextStyle(
-                      color: Color(0xFF2E1963),
-                      fontSize: 12,
+                      color: Color.fromARGB(255, 211, 38, 15),
+                      fontSize: 18,
                       fontStyle: FontStyle.italic),
                 ),
                 Text(
@@ -222,7 +222,7 @@ class ChatBubble extends StatelessWidget {
                   textAlign: TextAlign.start,
                   softWrap: true,
                   style: const TextStyle(
-                      color: Color.fromARGB(255, 8, 2, 22), fontSize: 18),
+                      color: Color.fromARGB(255, 8, 2, 22), fontSize: 30),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -232,7 +232,7 @@ class ChatBubble extends StatelessWidget {
                       date,
                       textAlign: TextAlign.end,
                       style: const TextStyle(
-                          color: Color(0xFF594097), fontSize: 9),
+                          color: Color(0xFF594097), fontSize: 12),
                     ),
                   ),
                 )
