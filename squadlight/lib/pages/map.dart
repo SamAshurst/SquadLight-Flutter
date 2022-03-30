@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:squadlight/inheritedSocket.dart';
 import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -115,6 +117,19 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    InheritedSocket.of(context).socket.on('location', (location) {
+      Map<String, dynamic> convertedLocation =
+          Map<String, dynamic>.from(location);
+
+      // markers.add(Marker(
+      //   point: LatLng(convertedLocation['Lat'], convertedLocation['Lng']),
+      //   builder: (ctx) => const Icon(
+      //     Icons.location_on,
+      //     color: Colors.black87,
+      //     size: 50.0,
+      //   ),
+      // ));
+    });
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
