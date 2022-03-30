@@ -36,6 +36,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = <Widget>[
     ChatScreenGreen(key: Key("TestKey")),
     const MapPage(),
+    const Home(),
   ];
 
   var appBarHeight = AppBar().preferredSize.height;
@@ -53,7 +54,12 @@ class _MainPageState extends State<MainPage> {
               PopupMenuItem(
                 child: const Text('Leave Squad'),
                 onTap: () {
-                  // Add functionality to leave current squad/room
+                  InheritedSocket.of(context).socket.emit('disconnect');
+                  Navigator.pop(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Home(),
+                      ));
                 },
               )
             ],

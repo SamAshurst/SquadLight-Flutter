@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
                   InheritedSocket.of(context)
                       .socket
                       .emit('joinRoom', {roomName, username});
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const MainPage(),
@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
                 InheritedSocket.of(context)
                     .socket
                     .emit('joinRoom', {roomName, username});
-                Navigator.pushReplacement(
+                Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const MainPage(),
