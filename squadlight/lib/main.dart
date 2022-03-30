@@ -25,7 +25,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 // StartChat function for SOS
   bool _isLoading = false;
-
   void startChat() {
     setState(() {
       _isLoading = true;
@@ -33,13 +32,10 @@ class _MainPageState extends State<MainPage> {
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         _isLoading = false;
+        _selectedIndex = 0;
+        emergency = !emergency;
+        navBar();
       });
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChatScreenRed(
-                    key: Key("Test"),
-                  )));
     });
   }
 
@@ -52,11 +48,25 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  bool emergency = false;
+  navBar() {
+    if (emergency) {
+      _pages = <Widget>[
+        const ChatScreenRed(key: Key("TestKey")),
+        const MapPage(),
+      ];
+    } else {
+      _pages = <Widget>[
+        const ChatScreenGreen(key: Key("TestKey")),
+        const MapPage(),
+      ];
+    }
+  }
+
   // Navigation - Pages
-  final List<Widget> _pages = <Widget>[
+  List<Widget> _pages = <Widget>[
     ChatScreenGreen(key: Key("TestKey")),
     const MapPage(),
-    const Home(),
   ];
 
   var appBarHeight = AppBar().preferredSize.height;
