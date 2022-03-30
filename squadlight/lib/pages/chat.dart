@@ -24,20 +24,28 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
     if (mounted) setState(f);
   }
 
+  bool connectionActive = false;
+
   @override
   Widget build(BuildContext context) {
-    InheritedSocket.of(context).socket.on('message', (message) {
-      print(message);
-      Map<String, dynamic> convertedMessage =
-          Map<String, dynamic>.from(message);
-      setState(() {
-        _messages.add(ChatModel(
-            id: convertedMessage['username'],
-            username: convertedMessage['username'],
-            sentAt: convertedMessage['time'],
-            message: convertedMessage['text']));
+    if (connectionActive == false) {
+      InheritedSocket.of(context).socket.on('message', (message) {
+        print("message received");
+        print(message);
+        Map<String, dynamic> convertedMessage =
+            Map<String, dynamic>.from(message);
+        setState(() {
+          _messages.add(ChatModel(
+              id: convertedMessage['username'],
+              username: convertedMessage['username'],
+              sentAt: convertedMessage['time'],
+              message: convertedMessage['text']));
+        });
+        setState(() {
+          connectionActive = true;
+        });
       });
-    });
+    }
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -73,6 +81,7 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: _messages.map((message) {
                                   return ChatBubble(
+                                      username: message.username,
                                       date: message.sentAt,
                                       message: message.message,
                                       isMe: message.id == 'me',
@@ -122,7 +131,7 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
                               _messages.add(ChatModel(
                                   id: 'me',
                                   username: 'me',
-                                  sentAt: 'time',
+                                  sentAt: DateTime.now().toString(),
                                   message: message));
                               _messageController.clear();
                               print(
@@ -151,6 +160,7 @@ class ChatBubble extends StatelessWidget {
   final bool isMe = true;
   final String message;
   final String date;
+  final String username;
 
   ChatBubble({
     required Key key,
@@ -158,6 +168,7 @@ class ChatBubble extends StatelessWidget {
     // required this.isMe = true,
     required this.date,
     required bool isMe,
+    required this.username,
   });
   @override
   Widget build(BuildContext context) {
@@ -166,16 +177,19 @@ class ChatBubble extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Column(
         mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            username == "me" ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: username == "me"
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             margin: const EdgeInsets.symmetric(vertical: 5.0),
             constraints: BoxConstraints(maxWidth: size.width * .5),
             decoration: BoxDecoration(
-              color: isMe ? const Color(0xFFE3D8FF) : const Color(0xFFFFFFFF),
+              color: username == "me"
+                  ? const Color(0xFFE3D8FF)
+                  : const Color(0xFFFFFFFF),
               borderRadius: isMe
                   ? const BorderRadius.only(
                       topRight: Radius.circular(11),
@@ -194,6 +208,15 @@ class ChatBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Text(
+                  username,
+                  textAlign: TextAlign.end,
+                  softWrap: true,
+                  style: const TextStyle(
+                      color: Color(0xFF2E1963),
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic),
+                ),
                 Text(
                   message,
                   textAlign: TextAlign.start,
