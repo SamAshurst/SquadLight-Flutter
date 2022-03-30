@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:squadlight/inheritedSocket.dart';
+import 'package:squadlight/pages/red_chat.dart';
 import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -107,12 +108,50 @@ class _MapPageState extends State<MapPage> {
       ));
     });
     await _getCurrentLocation();
+    double totalLat = 0;
+    double totalLng = 0;
+    for (var i = 0; i < markers.length; i++) {
+      totalLat += markers[i].point.latitude;
+      totalLng += markers[i].point.longitude;
+    }
+    double avgLat = totalLat / markers.length;
+    double avgLng = totalLng / markers.length;
+    for (var i = 0; i < markers.length; i++) {
+      double distanceInMeters = Geolocator.distanceBetween(
+          markers[i].point.latitude,
+          markers[i].point.longitude,
+          avgLat,
+          avgLng);
+      if (distanceInMeters > 150) {
+        startChat();
+        return;
+      }
+    }
+  }
+
+  bool _isLoading = false;
+  void startChat() {
+    setState(() {
+      _isLoading = true;
+    });
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatScreenRed(
+                    key: Key("Test"),
+                  )));
+    });
   }
 
   bool connectionActive = false;
 
   @override
   Widget build(BuildContext context) {
+
     Timer timer = Timer(const Duration(seconds: 60), () async {
       await _getCurrentLocation();
       var Lat = userLoc.latitude;
@@ -138,6 +177,7 @@ class _MapPageState extends State<MapPage> {
       updateMapLocationOnPositionChange: false,
       zoomToCurrentLocationOnLoad: true,
     );
+
     return Scaffold(
       body: Center(
         child: Column(
