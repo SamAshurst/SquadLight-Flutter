@@ -115,21 +115,42 @@ class _MapPageState extends State<MapPage> {
 
   late Position _currentPosition;
 
+  void createMarker(location) {
+    Map<String, dynamic> convertedLocation =
+    Map<String, dynamic>.from(location);
+    var Lat = double.parse(convertedLocation['Lat']);
+    var Lng = double.parse(convertedLocation['Lng']);
+    setState(() {
+      markers.add(Marker(
+        point: LatLng(Lat, Lng),
+        builder: (ctx) =>
+        const Icon(
+          Icons.location_on,
+          color: Colors.black87,
+          size: 35.0,
+        ),
+      ));
+    });
+    for(var i = 0; i < markers.length; i++){
+      print(markers[i].point);
+    }
+  }
+  bool connectionActive = false;
+
   @override
   Widget build(BuildContext context) {
-    InheritedSocket.of(context).socket.on('location', (location) {
-      Map<String, dynamic> convertedLocation =
-          Map<String, dynamic>.from(location);
-
-      // markers.add(Marker(
-      //   point: LatLng(convertedLocation['Lat'], convertedLocation['Lng']),
-      //   builder: (ctx) => const Icon(
-      //     Icons.location_on,
-      //     color: Colors.black87,
-      //     size: 50.0,
-      //   ),
-      // ));
-    });
+    print(markers);
+    if (!connectionActive) {
+      InheritedSocket
+          .of(context)
+          .socket
+          .on('location', (location) {
+        createMarker(location);
+      });
+      setState(() {
+        connectionActive = true;
+      });
+    }
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
