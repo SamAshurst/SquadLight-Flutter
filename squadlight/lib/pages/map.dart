@@ -181,40 +181,44 @@ class _MapPageState extends State<MapPage> {
     );
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          heroTag: "getCurrentLocation",
-          onPressed: () async {
-            var Lat = userLoc.latitude;
-            var Lng = userLoc.longitude;
-            var words = await api
-                .convertTo3wa(Coordinates(Lat, Lng))
-                .language('en')
-                .execute();
-            var w3wData = words.data()?.toJson();
-            Map<dynamic, dynamic> convertedObject =
-                Map<dynamic, dynamic>.from(w3wData!);
-            setState(() {
-              w3w = convertedObject['words'];
-            });
-            showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('What3words'),
-                content: Text(w3w),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'Cancel'),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'OK'),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          },
-          child: const Text('Get User Location')),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: FloatingActionButton(
+            heroTag: "getCurrentLocation",
+            onPressed: () async {
+              var Lat = userLoc.latitude;
+              var Lng = userLoc.longitude;
+              var words = await api
+                  .convertTo3wa(Coordinates(Lat, Lng))
+                  .language('en')
+                  .execute();
+              var w3wData = words.data()?.toJson();
+              Map<dynamic, dynamic> convertedObject =
+                  Map<dynamic, dynamic>.from(w3wData!);
+              setState(() {
+                w3w = convertedObject['words'];
+              });
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('What3words'),
+                  content: Text(w3w),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: const Text('///W3W')),
+      ),
       body: Center(
         child: Column(
           children: [
