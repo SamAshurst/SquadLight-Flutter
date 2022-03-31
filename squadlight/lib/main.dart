@@ -79,13 +79,13 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.grey[850],
         leading: ElevatedButton(
             onPressed: () {
-              var sos = "Someone has sent an SOS!".toString();
+              var sos = "Dan has sent an SOS!".toString();
               InheritedSocket.of(context).socket.emit("alert", sos);
 
               startChat();
             },
             style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 14, 226, 67)),
+                primary: Color.fromARGB(255, 212, 10, 10)),
             child: const Icon(Icons.warning, size: 20)),
         actions: [
           PopupMenuButton(

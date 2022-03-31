@@ -50,7 +50,7 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: const Text('Fun Chat Screen'),
+          title: const Text('Northcoders Chat'),
           backgroundColor: const Color(0xFF43EA2B)),
       body: SafeArea(
         child: Container(
