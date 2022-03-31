@@ -9,8 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:what3words/what3words.dart';
 
-
-
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
@@ -156,7 +154,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-
     Timer timer = Timer(const Duration(seconds: 60), () async {
       await _getCurrentLocation();
       var Lat = userLoc.latitude;
@@ -195,10 +192,27 @@ class _MapPageState extends State<MapPage> {
                 .execute();
             var w3wData = words.data()?.toJson();
             Map<dynamic, dynamic> convertedObject =
-            Map<dynamic, dynamic>.from(w3wData!);
+                Map<dynamic, dynamic>.from(w3wData!);
             setState(() {
               w3w = convertedObject['words'];
             });
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('What3words'),
+                content: Text(w3w),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
           },
           child: const Text('Get User Location')),
       body: Center(
