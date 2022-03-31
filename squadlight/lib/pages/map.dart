@@ -7,6 +7,9 @@ import 'package:squadlight/pages/red_chat.dart';
 import 'package:user_location/user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:what3words/what3words.dart';
+
+
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -19,6 +22,8 @@ class _MapPageState extends State<MapPage> {
   LatLng userLoc = LatLng(53.472164, -2.238193);
   final MapController mapController = MapController();
   late UserLocationOptions userLocationOptions;
+  var api = What3WordsV3('ZGFYK0BN');
+  String w3w = '';
   List<Marker> markers = [];
 
   void initState() {
@@ -179,6 +184,23 @@ class _MapPageState extends State<MapPage> {
     );
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          heroTag: "getCurrentLocation",
+          onPressed: () async {
+            var Lat = userLoc.latitude;
+            var Lng = userLoc.longitude;
+            var words = await api
+                .convertTo3wa(Coordinates(Lat, Lng))
+                .language('en')
+                .execute();
+            var w3wData = words.data()?.toJson();
+            Map<dynamic, dynamic> convertedObject =
+            Map<dynamic, dynamic>.from(w3wData!);
+            setState(() {
+              w3w = convertedObject['words'];
+            });
+          },
+          child: const Text('Get User Location')),
       body: Center(
         child: Column(
           children: [
