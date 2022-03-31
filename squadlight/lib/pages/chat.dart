@@ -50,7 +50,7 @@ class _ChatScreenGreenState extends State<ChatScreenGreen> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: const Text('Fun Chat Screen'),
+          title: const Text('Northcoders Chat'),
           backgroundColor: const Color(0xFF43EA2B)),
       body: SafeArea(
         child: Container(
@@ -190,7 +190,7 @@ class ChatBubble extends StatelessWidget {
               color: username == "me"
                   ? const Color(0xFFE3D8FF)
                   : const Color(0xFFFFFFFF),
-              borderRadius: isMe
+              borderRadius: username == "me"
                   ? const BorderRadius.only(
                       topRight: Radius.circular(11),
                       topLeft: Radius.circular(11),

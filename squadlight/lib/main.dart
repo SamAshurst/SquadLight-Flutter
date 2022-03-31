@@ -78,9 +78,14 @@ class _MainPageState extends State<MainPage> {
         title: const Text("SquadLight"),
         backgroundColor: Colors.grey[850],
         leading: ElevatedButton(
-            onPressed: startChat,
+            onPressed: () {
+              var sos = "Dan has sent an SOS!".toString();
+              InheritedSocket.of(context).socket.emit("alert", sos);
+
+              startChat();
+            },
             style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 226, 14, 14)),
+                primary: Color.fromARGB(255, 212, 10, 10)),
             child: const Icon(Icons.warning, size: 20)),
         actions: [
           PopupMenuButton(
